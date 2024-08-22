@@ -5,13 +5,13 @@ import { Container, Table, Alert, Row, Col } from 'react-bootstrap';
 const API_URL = 'http://localhost:5000';
 
 const Dashboard = () => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({});
     const role = localStorage.getItem('role');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const endpoint = role === 'admin' ? `${API_URL}/api/admins/users` : `${API_URL}/api/users/accounts`;
+                const endpoint = role === 'admin' ? `${API_URL}/api/admins/users` : `${API_URL}/api/users/details`;
                 const response = await axios.get(endpoint, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -56,26 +56,35 @@ const Dashboard = () => {
                 </div>
             )}
 
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        {role === 'admin' && <th>Name</th>}
-                        {role === 'admin' && <th>Email</th>}
-                        {role === 'admin' && <th>Status</th>}
-                        {role !== 'admin' && <th>Account Details</th>}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map(item => (
-                        <tr key={item._id}>
-                            {role === 'admin' && <td>{item.name}</td>}
-                            {role === 'admin' && <td>{item.email}</td>}
-                            {role === 'admin' && <td>{item.isActive ? 'Active' : 'Inactive'}</td>}
-                            {role !== 'admin' && <td>{item.details}</td>}
+            {role !== 'admin' && (
+                <div className="mb-4">
+                    <h4>User Details</h4>
+                    <p><strong>Name:</strong> {data.name}</p>
+                    <p><strong>Email:</strong> {data.email}</p>
+                    <p><strong>Balance:</strong> {data.balance}</p>
+                </div>
+            )}
+
+            {role === 'admin' && (
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {data.map(item => (
+                            <tr key={item._id}>
+                                <td>{item.name}</td>
+                                <td>{item.email}</td>
+                                <td>{item.isActive ? 'Active' : 'Inactive'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            )}
         </Container>
     );
 };
