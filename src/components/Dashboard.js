@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, Table, Alert, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const API_URL = 'http://localhost:5000';
 
 const Dashboard = () => {
     const [data, setData] = useState({});
+    const [userData, setUserData] = useState(null); // For user-specific data
+    const [adminData, setAdminData] = useState([]); // For admin-specific data
     const role = localStorage.getItem('role');
 
     useEffect(() => {
@@ -17,7 +20,13 @@ const Dashboard = () => {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                setData(response.data);
+                
+                if (role === 'admin') {
+                    setAdminData(response.data); // Assuming this returns an array of users
+                } else {
+                    setUserData(response.data); // Assuming this returns user details
+                }
+                
             } catch (error) {
                 alert('Error fetching data');
             }
@@ -39,16 +48,20 @@ const Dashboard = () => {
 
             {role === 'user' && (
                 <div className="mb-4">
-                    <a href="#apply-loan" className="btn btn-primary me-2">Apply for Loan</a>
-                    <a href="#transfer-money" className="btn btn-primary me-2">Transfer Money</a>
-                    <a href="#calculate-emi" className="btn btn-primary">Calculate the Loan EMI</a>
+                    <Link to="/apply-loan" className="btn btn-primary me-2">Apply for Loan</Link>
+                    <Link to="/transfer-money" className="btn btn-primary me-2">Transfer Money</Link>
+                    <Link to="/deposit-money" className="btn btn-primary me-2">Deposit Money</Link>
+                    <Link to="/withdraw-money" className="btn btn-primary me-2">Withdraw Money</Link>
+                    <Link to="/view-transactions" className="btn btn-primary me-2">View Transactions</Link>
+                    <Link to="/repay-loan" className="btn btn-primary me-2">Repay Loan</Link>
+                    <Link to="#calculate-emi" className="btn btn-primary me-2">Calculate the Loan EMI</Link>
                 </div>
             )}
 
             {role === 'admin' && (
                 <div className="mb-4">
                     <a href="#see-all-users" className="btn btn-primary me-2">See All Users</a>
-                    <a href="#see-all-loans" className="btn btn-primary me-2">See All Loans</a>
+                    <Link to="/manage-loans" className="btn btn-primary me-2">Manage Loans</Link>
                     <a href="#see-total-amount" className="btn btn-primary me-2">See Total Amount</a>
                     <a href="#see-number-loans" className="btn btn-primary me-2">See Number of Loans Going On</a>
                     <a href="#see-pending-loans" className="btn btn-primary me-2">See Pending Loans</a>
@@ -56,16 +69,16 @@ const Dashboard = () => {
                 </div>
             )}
 
-            {role !== 'admin' && (
+            {role !== 'admin' && userData && (
                 <div className="mb-4">
                     <h4>User Details</h4>
-                    <p><strong>Name:</strong> {data.name}</p>
-                    <p><strong>Email:</strong> {data.email}</p>
-                    <p><strong>Balance:</strong> {data.balance}</p>
+                    <p><strong>Name:</strong> {userData.name}</p>
+                    <p><strong>Email:</strong> {userData.email}</p>
+                    <p><strong>Balance:</strong> {userData.balance}</p>
                 </div>
             )}
 
-            {role === 'admin' && (
+            {role === 'admin' && Array.isArray(adminData) && (
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -75,7 +88,7 @@ const Dashboard = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map(item => (
+                        {adminData.map(item => (
                             <tr key={item._id}>
                                 <td>{item.name}</td>
                                 <td>{item.email}</td>

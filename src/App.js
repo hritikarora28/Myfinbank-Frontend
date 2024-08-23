@@ -7,6 +7,13 @@ import './App.css';
 const Register = lazy(() => import('./components/Register'));
 const Login = lazy(() => import('./components/Login'));
 const Dashboard = lazy(() => import('./components/Dashboard'));
+const LoanApplicationForm = lazy(() => import('./components/LoanApplicationForm'));
+const AdminLoanManagement = lazy(() => import('./components/AdminLoanManagement'));
+const DepositMoney = lazy(() => import('./components/DepositMoney'));
+const WithdrawMoney = lazy(() => import('./components/WithdrawMoney'));
+const TransferMoney = lazy(() => import('./components/TransferMoney'));
+const ViewTransactions = lazy(() => import('./components/ViewTransactions'));
+const RepayLoan = lazy(() => import('./components/RepayLoan'));
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'));
 
 function App() {
@@ -31,6 +38,69 @@ function App() {
                         element={
                             <ProtectedRoute
                                 element={Dashboard}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/apply-loan"
+                        element={
+                            <ProtectedRoute
+                                element={LoanApplicationForm}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/manage-loans"
+                        element={
+                            <ProtectedRoute
+                                element={AdminLoanManagement}
+                                allowedRoles={['admin']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/deposit-money"
+                        element={
+                            <ProtectedRoute
+                                element={DepositMoney}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/withdraw-money"
+                        element={
+                            <ProtectedRoute
+                                element={WithdrawMoney}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/transfer-money"
+                        element={
+                            <ProtectedRoute
+                                element={TransferMoney}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/view-transactions"
+                        element={
+                            <ProtectedRoute
+                                element={ViewTransactions}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/repay-loan"
+                        element={
+                            <ProtectedRoute
+                                element={RepayLoan}
                                 allowedRoles={['user']}
                             />
                         }
