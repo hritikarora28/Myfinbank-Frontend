@@ -13,7 +13,7 @@ const NavigationBar = () => {
     };
 
     return (
-        <Navbar bg="light" expand="lg">
+        <Navbar bg="primary" expand="lg">
             <Navbar.Brand as={Link} to="/">MyFinBank</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">

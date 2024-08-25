@@ -14,6 +14,7 @@ const WithdrawMoney = lazy(() => import('./components/WithdrawMoney'));
 const TransferMoney = lazy(() => import('./components/TransferMoney'));
 const ViewTransactions = lazy(() => import('./components/ViewTransactions'));
 const RepayLoan = lazy(() => import('./components/RepayLoan'));
+const AdminViewTrasaction = lazy(()=> import('./components/AdminViewTrasaction'))
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'));
 
 function App() {
@@ -93,6 +94,15 @@ function App() {
                             <ProtectedRoute
                                 element={ViewTransactions}
                                 allowedRoles={['user']}
+                            />
+                        }
+                    />
+                                        <Route
+                        path="/all-transactions"
+                        element={
+                            <ProtectedRoute
+                                element={AdminViewTrasaction}
+                                allowedRoles={['admin']}
                             />
                         }
                     />
