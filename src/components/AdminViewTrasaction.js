@@ -9,7 +9,7 @@ const AdminViewTrasaction = () => {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/transactions', {
+                const response = await axios.get('http://localhost:5000/api/transactions/all-transactions', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }

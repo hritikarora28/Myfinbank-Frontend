@@ -14,9 +14,19 @@ const WithdrawMoney = lazy(() => import('./components/WithdrawMoney'));
 const TransferMoney = lazy(() => import('./components/TransferMoney'));
 const ViewTransactions = lazy(() => import('./components/ViewTransactions'));
 const RepayLoan = lazy(() => import('./components/RepayLoan'));
-const AdminViewTrasaction = lazy(()=> import('./components/AdminViewTrasaction'))
+const AdminViewTrasaction = lazy(() => import('./components/AdminViewTrasaction'))
+const StartRecurringForm = lazy(() => import('./components/StartRecurringForm'));
+const PayRecurringForm = lazy(() => import('./components/PayRecurringForm'));
+const ViewRecurringDeposits = lazy(() => import('./components/ViewRecurringDeposits'));
+const AdminViewRecurringDeposits = lazy(() => import('./components/AdminViewRecurringDeposits'));
+const CreateFDForm = lazy(() => import('./components/CreateFDForm'))
+const WithdrawFDForm = lazy(() => import('./components/WithdrawFDForm'));
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'));
-
+const Chat = lazy(() => import('./components/Chat'));
+const Notification = lazy(() => import('./components/Notification'));
+const ViewAllFd = lazy(() => import('./components/ViewAllFd'));
+const ViewFd = lazy(() => import('./components/Viewfd'));
+const ViewUserLoans = lazy(() => import('./components/ViewUserLoans'));
 function App() {
     return (
         <Router>
@@ -25,6 +35,8 @@ function App() {
                 <Routes>
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/notifications" element={<Notification />} />
                     <Route
                         path="/admin-dashboard"
                         element={
@@ -97,7 +109,7 @@ function App() {
                             />
                         }
                     />
-                                        <Route
+                    <Route
                         path="/all-transactions"
                         element={
                             <ProtectedRoute
@@ -115,6 +127,93 @@ function App() {
                             />
                         }
                     />
+                    <Route
+                        path="/start-recurring"
+                        element={
+                            <ProtectedRoute
+                                element={StartRecurringForm}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/pay-recurring"
+                        element={
+                            <ProtectedRoute
+                                element={PayRecurringForm}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/view-recurring"
+                        element={
+                            <ProtectedRoute
+                                element={ViewRecurringDeposits}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/all-recurring-deposits"
+                        element={
+                            <ProtectedRoute
+                                element={AdminViewRecurringDeposits}
+                                allowedRoles={['admin']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/create-fd"
+                        element={
+                            <ProtectedRoute
+                                element={CreateFDForm}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/withdraw-fd"
+                        element={
+                            <ProtectedRoute
+                                element={WithdrawFDForm}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/all-fd"
+                        element={
+                            <ProtectedRoute
+                                element={ViewAllFd}
+                                allowedRoles={['admin']}
+                            />
+                        }
+
+                    />
+                    <Route
+                        path="/my-fd"
+                        element={
+                            <ProtectedRoute
+                                element={ViewFd}
+                                allowedRoles={['user']}
+                            />
+                        }
+
+                    />
+
+                    <Route
+                        path="/view-loans"
+                        element={
+                            <ProtectedRoute
+                                element={ViewUserLoans}
+                                allowedRoles={['user']}
+                            />
+                        }
+                    />
+
+
+
                     <Route path="/" element={<Login />} />
                 </Routes>
             </Suspense>
