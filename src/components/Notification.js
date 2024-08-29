@@ -1,4 +1,3 @@
-// src/components/Notification.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -6,32 +5,48 @@ const API_URL = 'http://localhost:5000';
 
 const Notification = () => {
     const [notifications, setNotifications] = useState([]);
-    const userId = localStorage.getItem('userId');
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get(`${API_URL}/api/emails/${userId}`);
-                setNotifications(response.data);
+                // Fetch users with zero balance for admin
+                const response = await axios.get(`${API_URL}/api/admins/users/zero-balance`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+
+                // Process the response data to create notifications
+                const zeroBalanceUsers = response.data.map(user => ({
+                    message: `User ${user.name} (Email: ${user.email}) has a zero balance.`,
+                    timestamp: new Date().toISOString(), // Current timestamp for display
+                }));
+                
+                setNotifications(zeroBalanceUsers); // Set the notifications state
             } catch (error) {
                 console.error('Error fetching notifications:', error);
+                setError('Failed to fetch notifications. Please try again later.');
             }
         };
 
-        fetchNotifications();
-    }, [userId]);
+        fetchNotifications(); // Fetch notifications on component mount
+    }, []);
 
     return (
         <div>
             <h3>Notifications</h3>
-            {notifications.map((notification, index) => (
-                <div key={index}>
-                    <p>{notification.message}</p>
-                    
-                    <span>{new Date(notification.sentAt).toLocaleString()}</span>
-                </div>
-            ))}
-            <p>Joe doe has zero balance in account</p>
+            {error && <p className="text-danger">{error}</p>}
+            {notifications.length > 0 ? (
+                notifications.map((notification, index) => (
+                    <div key={index} className="alert alert-info">
+                        <p>{notification.message}</p>
+                        <span>{new Date(notification.timestamp).toLocaleString()}</span>
+                    </div>
+                ))
+            ) : (
+                <p>No notifications available.</p>
+            )}
         </div>
     );
 };

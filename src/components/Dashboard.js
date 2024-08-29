@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Table, Alert, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Chat from './Chat';
 import Notification from './Notification';
 
 const API_URL = 'http://localhost:5000';
@@ -12,6 +12,8 @@ const Dashboard = () => {
     const [userData, setUserData] = useState(null);
     const [adminData, setAdminData] = useState([]);
     const role = localStorage.getItem('role');
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,6 +58,10 @@ const Dashboard = () => {
             console.error('Error toggling user status:', error);
         }
     };
+    const handleUpdateUser = (userId) => {
+        navigate(`/update-user/${userId}`);
+    };
+
 
     return (
         <Container className="mt-4">
@@ -85,7 +91,7 @@ const Dashboard = () => {
                     <Link to="/withdraw-fd" className="btn btn-primary me-2">Withdraw Fixed Deposit</Link>
                     <Link to="/my-fd" className="btn btn-primary me-2 my-2">View Fixed Deposits</Link>
 
-                    <Chat />
+                    
                 </div>
             )}
 
@@ -136,6 +142,14 @@ const Dashboard = () => {
                                         onClick={() => toggleUserStatus(user._id)}
                                     >
                                         {user.isActive ? 'Deactivate' : 'Activate'}
+                                    </Button>
+                                    {' '}
+
+                                    <Button
+                                        variant="warning"
+                                        onClick={() => handleUpdateUser(user._id)}
+                                    >
+                                        Update
                                     </Button>
                                 </td>
                             </tr>

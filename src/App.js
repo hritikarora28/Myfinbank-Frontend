@@ -27,6 +27,7 @@ const Notification = lazy(() => import('./components/Notification'));
 const ViewAllFd = lazy(() => import('./components/ViewAllFd'));
 const ViewFd = lazy(() => import('./components/Viewfd'));
 const ViewUserLoans = lazy(() => import('./components/ViewUserLoans'));
+const UpdateUser = lazy(() => import('./components/UpdateUser'));
 function App() {
     return (
         <Router>
@@ -208,6 +209,15 @@ function App() {
                             <ProtectedRoute
                                 element={ViewUserLoans}
                                 allowedRoles={['user']}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/update-user/:userId"
+                        element={
+                            <ProtectedRoute
+                                element={UpdateUser}
+                                allowedRoles={['admin']}
                             />
                         }
                     />
