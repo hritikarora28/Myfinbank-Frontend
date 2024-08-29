@@ -42,7 +42,7 @@ const AdminViewTrasaction = () => {
                             <td>{tx._id}</td>
                             <td>{tx.type}</td>
                             <td>{tx.amount}</td>
-                            <td>{new Date(tx.date).toLocaleString()}</td>
+                            <td>{new Date(tx.transactionDate).toLocaleString()}</td>
                         </tr>
                     ))}
                 </tbody>

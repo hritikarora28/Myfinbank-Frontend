@@ -37,8 +37,8 @@ const ViewUserLoans = () => {
                             <th>ID</th>
                             <th>Loan Amount</th>
                             <th>Interest Rate</th>
-                            <th>Start Date</th>
-                            <th>Maturity Date</th>
+                            <th>Applied Date</th>
+                            <th>Approved/Deny Date</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -48,8 +48,8 @@ const ViewUserLoans = () => {
                                 <td>{loan._id}</td>
                                 <td>{loan.loanAmount}</td>
                                 <td>{loan.interestRate}%</td>
-                                <td>{new Date(loan.startDate).toLocaleDateString()}</td>
-                                <td>{new Date(loan.maturityDate).toLocaleDateString()}</td>
+                                <td>{new Date(loan.appliedDate).toLocaleDateString()}</td>
+                                <td>{new Date(loan.approvedDate).toLocaleDateString()}</td>
                                 <td>{loan.status}</td>
                             </tr>
                         ))}

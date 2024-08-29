@@ -11,7 +11,7 @@ const ViewAllFd = () => {
     useEffect(() => {
         const fetchFixedDeposits = async () => {
             try {
-                const response = await axios.get(`${API_URL}/api/transactions/all-fixed-deposits`, {
+                const response = await axios.get(`${API_URL}/api/transactions/my-fixed-deposits`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }

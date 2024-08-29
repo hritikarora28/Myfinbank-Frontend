@@ -1,90 +1,122 @@
 import React, { useEffect, useState } from 'react';
+import io from 'socket.io-client';
 import axios from 'axios';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 
-const API_URL = 'http://localhost:5000';
+const SOCKET_SERVER_URL = 'http://localhost:5000'; // Your backend server URL
+const socket = io(SOCKET_SERVER_URL);
 
 const Chat = () => {
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
-    const userId = localStorage.getItem('userId');
-    const [receiverId, setReceiverId] = useState('');
-    const [error, setError] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [receiverEmail, setReceiverEmail] = useState('');
+  const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchMessages = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/api/chats/${userId}`);
-                setMessages(response.data);
-            } catch (error) {
-                console.error('Error fetching chat messages:', error);
-                setError('Failed to fetch messages. Please try again later.');
-            }
-        };
+  // Ensure we get the email from localStorage correctly
+  const userEmail = localStorage.getItem('email') || ''; // Fetch from localStorage
 
-        fetchMessages();
-    }, [userId]);
+  useEffect(() => {
+    if (userEmail) {
+      // Identify the user to the server immediately after connection
+      socket.emit('identify', userEmail);
+    } else {
+      setError('User email is missing. Please log in again.');
+    }
 
-    const handleSendMessage = async () => {
-        if (!newMessage || !receiverId) {
-            setError('Please enter a message and receiver ID.');
-            return;
+    const fetchMessages = async () => {
+      try {
+        if (!userEmail) {
+          setError('User email is missing. Please log in again.');
+          return;
         }
-
-        try {
-            const response = await axios.post(`${API_URL}/api/chats/send`, {
-                senderId: userId,
-                receiverId,
-                message: newMessage,
-            });
-
-            setMessages([...messages, response.data]);
-            setNewMessage('');
-            setError('');
-        } catch (error) {
-            console.error('Error sending message:', error);
-            setError('Failed to send the message. Please try again later.');
-        }
+        const response = await axios.get(`${SOCKET_SERVER_URL}/api/chats/${userEmail}`);
+        setMessages(response.data);
+      } catch (error) {
+        console.error('Error fetching chat messages:', error);
+        setError('Failed to fetch messages. Please try again later.');
+      }
     };
 
-    return (
-        <Container className="mt-4">
-            <Row>
-                <Col md={8} className="mx-auto">
-                    <h3 className="text-center mb-4">Chat</h3>
-                    {error && <Alert variant="danger">{error}</Alert>}
-                    <div className="chat-box mb-4" style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ddd', padding: '10px' }}>
-                        {messages.map((msg, index) => (
-                            <div key={index} className={msg.senderId._id === userId ? 'text-end' : 'text-start'}>
-                                <strong>{msg.senderId._id === userId ? 'You' : msg.senderId.name}:</strong> {msg.message}
-                            </div>
-                        ))}
-                    </div>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Control
-                                type="text"
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                placeholder="Type a message"
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Control
-                                type="text"
-                                value={receiverId}
-                                onChange={(e) => setReceiverId(e.target.value)}
-                                placeholder="Receiver ID"
-                            />
-                        </Form.Group>
-                        <Button variant="primary" onClick={handleSendMessage} className="w-100">
-                            Send
-                        </Button>
-                    </Form>
-                </Col>
-            </Row>
-        </Container>
-    );
+    fetchMessages();
+
+    // Listen for incoming messages
+    socket.on('receiveMessage', (data) => {
+      console.log('Received message:', data); // Log to check received messages
+      setMessages((prevMessages) => [...prevMessages, data]);
+    });
+
+    // Clean up the effect by disconnecting the socket when the component unmounts
+    return () => {
+      socket.off('receiveMessage'); // Correctly remove event listener
+      socket.disconnect();
+    };
+  }, [userEmail]);
+
+  const handleSendMessage = () => {
+    if (!newMessage || !receiverEmail) {
+      setError('Please enter a message and receiver email.');
+      return;
+    }
+
+    if (!userEmail) {
+      setError('Your email is missing. Please log in again.');
+      return;
+    }
+
+    const messageData = {
+      senderEmail: userEmail,
+      receiverEmail,
+      message: newMessage,
+    };
+
+    // Emit the message to the server
+    socket.emit('sendMessage', messageData);
+
+    // Optimistically update the UI
+    setMessages((prevMessages) => [...prevMessages, { senderEmail: userEmail, receiverEmail, message: newMessage }]);
+
+    setNewMessage('');
+    setError('');
+  };
+
+  return (
+    <Container className="mt-4">
+      <Row>
+        <Col md={8} className="mx-auto">
+          <h3 className="text-center mb-4">Chat</h3>
+          {error && <Alert variant="danger">{error}</Alert>}
+          <div className="chat-box mb-4" style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ddd', padding: '10px' }}>
+            {messages.map((msg, index) => (
+              <div key={index} className={msg.senderEmail === userEmail ? 'text-end' : 'text-start'}>
+                <strong>{msg.senderEmail === userEmail ? 'You' : msg.senderEmail}:</strong> {msg.message}
+              </div>
+            ))}
+          </div>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="text"
+                value={receiverEmail}
+                onChange={(e) => setReceiverEmail(e.target.value)}
+                placeholder="Receiver Email"
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={handleSendMessage} className="w-100">
+              Send
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
+  );
 };
 
 export default Chat;

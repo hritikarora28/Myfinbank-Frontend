@@ -1,6 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Spinner, Container } from 'react-bootstrap';
 import NavigationBar from './components/Navbar';
+import Footer from './components/Footer'; 
 import './App.css';
 
 // Lazy load components
@@ -32,7 +34,11 @@ function App() {
     return (
         <Router>
             <NavigationBar />
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={ <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    </Container>}>
                 <Routes>
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
@@ -227,6 +233,7 @@ function App() {
                     <Route path="/" element={<Login />} />
                 </Routes>
             </Suspense>
+            <Footer />
         </Router>
     );
 }

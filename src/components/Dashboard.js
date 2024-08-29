@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { Container, Table, Alert, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Notification from './Notification';

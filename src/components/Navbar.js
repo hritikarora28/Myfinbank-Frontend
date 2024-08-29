@@ -37,15 +37,21 @@ const NavigationBar = () => {
                                     <>
                                         <Nav.Link as={Link} to="/admin-dashboard">Admin Dashboard</Nav.Link>
                                         {/* Add other admin links here */}
+                                        <Nav.Link as={Link} to="#" onClick={handleShowChat}>
+                                            Chat
+                                        </Nav.Link>
+
+
                                     </>
                                 )}
                                 {role === 'user' && (
                                     <>
                                         <Nav.Link as={Link} to="/user-dashboard">User Dashboard</Nav.Link>
                                         {/* Add other user links here */}
-                                        <Button variant="primary" onClick={handleShowChat}>
+                                        <Nav.Link as={Link} to="#" onClick={handleShowChat}>
                                             Chat
-                                        </Button>
+                                        </Nav.Link>
+
 
                                     </>
                                 )}
